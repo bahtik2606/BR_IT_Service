@@ -1,0 +1,48 @@
+CREATE DATABASE IF NOT EXISTS br_it_service CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE br_it_service;
+
+-- Admin va foydalanuvchilar jadvali
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'user') DEFAULT 'admin',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Boshlang'ich Admin akkauntini yaratish (login: admin, parol: admin123)
+INSERT INTO users (username, email, password, role) 
+VALUES ('admin', 'bahtik2606@gmail.com', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe18q14J5K3mD6yN16X2d6mZ4S4X4X4X4', 'admin')
+ON DUPLICATE KEY UPDATE id=id;
+
+-- Buyurtmalar va mijozlar jadvali
+CREATE TABLE IF NOT EXISTS orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    client_name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    service_type VARCHAR(150) NOT NULL,
+    description TEXT NULL,
+    price DECIMAL(10,2) DEFAULT 0.00,
+    status ENUM('Yangi', 'Jarayonda', 'Bajarildi', 'Bekor qilindi') DEFAULT 'Yangi',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Mijozlar izohlari (Comments)
+CREATE TABLE IF NOT EXISTS comments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    comment TEXT NOT NULL,
+    rating INT DEFAULT 5,
+    status ENUM('kutilmoqda', 'tasdiqlandi') DEFAULT 'tasdiqlandi',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Sayt statistikasi (Traffic)
+CREATE TABLE IF NOT EXISTS site_stats (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    page_views INT DEFAULT 0,
+    last_visited TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO site_stats (page_views) VALUES (1) ON DUPLICATE KEY UPDATE page_views = page_views + 1;
